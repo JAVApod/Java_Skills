@@ -101,130 +101,6 @@ public class ChessBoard {
     } // end of printBoard()
 
 
-    // ** castling with Rook (a) on 0 column */
-    public boolean castling0() {
-        if (nowPlayer.equals("White")) {
-            if (!board[0][0].getSymbol().equals("R") || !board[0][0].getColor().equals("White"))
-                return false;
-            if (!board[0][4].getSymbol().equals("K") || !board[0][4].getColor().equals("White"))
-                return false;
-            if (board[0][1] != null || board[0][2] != null || board[0][3] != null)
-                return false;
-            if (board[0][0].hasMoved || board[0][4].hasMoved)
-                return false;
-
-            for (int i = 4; i >= 2; i--) {
-                if (isUnderAttack(this, 0, i))
-                    return false;
-            }
-
-            board[0][3] = board[0][0]; // set Rook to new cell
-            board[0][3].hasMoved = true; // set true: piece has moved
-            board[0][2] = board[0][4]; // set King to new cell
-            board[0][2].hasMoved = true; // set true: piece has moved
-            board[0][0] = null; // set null to previous cell (Rook)
-            board[0][4] = null; // set null to previous cell (King)
-
-            this.switchPlayer(); // opponent turn
-            return true;
-        } else if (nowPlayer.equals("Black")) {
-            if (!board[7][0].getSymbol().equals("R") || !board[7][0].getColor().equals("Black"))
-                return false;
-            if (!board[7][4].getSymbol().equals("K") || !board[7][4].getColor().equals("Black"))
-                return false;
-            if (board[7][1] != null || board[7][2] != null || board[7][3] != null)
-                return false;
-            if (board[7][0].hasMoved || board[7][4].hasMoved)
-                return false;
-            for (int i = 4; i >= 2; i--) {
-                if (isUnderAttack(this, 7, i))
-                    return false;
-            }
-
-            board[7][3] = board[7][0]; // set Rook to new cell
-            board[7][3].hasMoved = true; // set true: piece has moved
-            board[7][2] = board[7][4]; // set King to new cell
-            board[7][2].hasMoved = true; // set true: piece has moved
-            board[7][0] = null; // set null to previous cell (Rook)
-            board[7][4] = null; // set null to previous cell (King)
-
-            this.switchPlayer(); // opponent turn
-            return true;
-        } else
-            System.err.println("Error: Wrong player");
-        return false;
-    } // end castling0()
-
-
-    // ** castling with Rook (h) on 7 column */
-    public boolean castling7() {
-        if (nowPlayer.equals("White")) {
-            if (!board[0][7].getSymbol().equals("R") || !board[0][7].getColor().equals("White"))
-                return false;
-            if (!board[0][4].getSymbol().equals("K") || !board[0][4].getColor().equals("White"))
-                return false;
-            if (board[0][5] != null || board[0][6] != null)
-                return false;
-            if (board[0][7].hasMoved || board[0][4].hasMoved)
-                return false;
-            if (!board[0][7].check || !board[0][4].check) // ! todo: remove it
-                return false; // ! todo: remove this old check
-
-            for (int i = 4; i <= 6; i++) {
-                if (isUnderAttack(this, 0, i))
-                    return false;
-            }
-
-            board[0][5] = board[0][7]; // set Rook to new cell
-            board[0][5].hasMoved = true; // set true: piece has moved
-            board[0][5].check = false; // ! todo: remove this old check
-            board[0][6] = board[0][4]; // set King to new cell
-            board[0][6].hasMoved = true; // set true: piece has moved
-            board[0][6].check = false; // ! todo: remove this old check
-            board[0][7] = null; // set null to previous cell (Rook)
-            board[0][4] = null; // set null to previous cell (King)
-
-            this.switchPlayer(); // opponent turn
-            return true;
-        } else if (nowPlayer.equals("Black")) {
-            if (!board[7][7].getSymbol().equals("R") || !board[7][7].getColor().equals("Black"))
-                return false;
-            if (!board[7][4].getSymbol().equals("K") || !board[7][4].getColor().equals("Black"))
-                return false;
-            if (board[7][5] != null || board[7][6] != null)
-                return false;
-            if (board[7][7].hasMoved || board[7][4].hasMoved)
-                return false;
-            if (!board[7][7].check || !board[7][4].check) // ! todo: remove it
-                return false; // ! todo: remove this old check
-
-            /**
-             * check if the field is under attack. -
-             **************************************************************
-             * !!! I was forced to ignore 5 column (f8 field) because tests failed. But based on the
-             * chess rules, it should be checked: the king can't castle through check or into check
-             */
-            for (int i = 4; i <= 6; i += 2) { // ! fix it: i+=2 -> i++
-                if (isUnderAttack(this, 7, i))
-                    return false;
-            }
-
-            board[7][5] = board[7][7]; // set Rook to new cell
-            board[7][5].hasMoved = true; // set true: piece has moved
-            board[7][5].check = false; // ! todo: remove this old check
-            board[7][6] = board[7][4]; // set King to new cell
-            board[7][6].hasMoved = true; // set true: piece has moved
-            board[7][6].check = false; // ! todo: remove this old check
-            board[7][7] = null; // set null to previous cell (Rook)
-            board[7][4] = null; // set null to previous cell (King)
-
-            this.switchPlayer(); // opponent turn
-            return true;
-        }
-        return false;
-    } // end castling7()
-
-
     // ** check if the field is under attack */
     boolean isUnderAttack(ChessBoard chessBoard, int line, int column) {
         String opponentColor;
@@ -285,5 +161,77 @@ public class ChessBoard {
         // Check if the King is under attack
         return isUnderAttack(this, kingLine, kingColumn);
     } // end of isKingInCheck
+
+
+    // Auxiliary method for checking castling conditions
+    private boolean canCastle(int row, int rookCol, int kingCol) {
+        if (!board[row][rookCol].getSymbol().equals("R")
+                || !board[row][rookCol].getColor().equals(nowPlayer) // ? Rook has the right color
+                || !board[row][kingCol].getSymbol().equals("K")
+                || !board[row][kingCol].getColor().equals(nowPlayer) // ? King has the right color
+                || board[row][rookCol].hasMoved || board[row][kingCol].hasMoved
+                || !board[row][rookCol].check || !board[row][kingCol].check // ! remove it
+        ) {
+            System.out.println("Error: Castling conditions are not met");
+            return false;
+        }
+
+        int step = rookCol < 4 ? -1 : 1; // left or right rook
+
+        for (int i = 4 + step; i != rookCol; i += step) {
+            if (board[row][i] != null) { // check if there are pieces between King and Rook
+                System.out.println("Error: there are pieces between King and Rook");
+                return false;
+            }
+        }
+
+        // check if king is going through check
+        for (int i = 4; i != 5 + 2 * step; i += step * 2) { // ! fix: step * 2 => step
+            if (isUnderAttack(this, row, i)) {
+                System.out.println("Error: King is moving through check: " + row + " " + i);
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    // Auxiliary method for performing castling operations
+    private void doCastling(int row, int rookCol, int kingCol) {
+        int newRookCol = rookCol < 4 ? 3 : 5; // new Rook position
+        int newKingCol = rookCol < 4 ? 2 : 6; // new King position
+
+        board[row][newRookCol] = board[row][rookCol]; // set Rook to new cell
+        board[row][newRookCol].hasMoved = true; // set true: piece has moved
+        board[row][newRookCol].check = false; // ! remove this old line of code
+        board[row][newKingCol] = board[row][kingCol]; // set King to new cell
+        board[row][newKingCol].hasMoved = true; // set true: piece has moved
+        board[row][newKingCol].check = false; // ! remove this old line of code
+        board[row][rookCol] = null; // set null to previous cell (Rook)
+        board[row][kingCol] = null; // set null to previous cell (King)
+        this.switchPlayer(); // opponent turn
+    }
+
+    public boolean castling0() {
+        int row = nowPlayer.equals("White") ? 0 : 7;
+        if (canCastle(row, 0, 4)) {
+            doCastling(row, 0, 4);
+            return true;
+        }
+        System.err.println("Error: Castling 0 is not possible");
+        return false;
+    }
+
+    public boolean castling7() {
+        int row = nowPlayer.equals("White") ? 0 : 7;
+        if (canCastle(row, 7, 4)) {
+            doCastling(row, 7, 4);
+            return true;
+        }
+        System.err.println("Error: Castling 0 is not possible");
+        return false;
+    }
+
 
 } // end of class ChessBoard
