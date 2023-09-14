@@ -1,3 +1,5 @@
+package chess;
+
 public abstract class ChessPiece {
     boolean check = true; // ! remove this old version of code. true = piece has not moved yet
     boolean hasMoved = false; // for castings

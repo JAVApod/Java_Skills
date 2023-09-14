@@ -1,3 +1,5 @@
+package chess;
+
 public class Pawn extends ChessPiece {
 
     public Pawn(String color) {

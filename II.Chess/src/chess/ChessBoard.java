@@ -1,3 +1,5 @@
+package chess;
+
 public class ChessBoard {
     public ChessPiece[][] board = new ChessPiece[8][8]; // creating a field for game
     String nowPlayer;
@@ -13,7 +15,6 @@ public class ChessBoard {
     public void switchPlayer() {
         this.nowPlayer = this.nowPlayerColor().equals("White") ? "Black" : "White";
     }
-
 
     public boolean moveToPosition(int startLine, int startColumn, int endLine, int endColumn) {
         // check if the input is valid (0-7)
@@ -76,7 +77,6 @@ public class ChessBoard {
         return true;
     }
 
-
     public void printBoard() { // print board in console
         System.out.println("Turn " + nowPlayer);
         System.out.println();
@@ -99,7 +99,6 @@ public class ChessBoard {
         }
         System.out.println("Player 1(White)");
     } // end of printBoard()
-
 
     // ** check if the field is under attack */
     boolean isUnderAttack(ChessBoard chessBoard, int line, int column) {
@@ -140,7 +139,6 @@ public class ChessBoard {
         return false; // The field is not under attack
     } // end of isUnderAttack
 
-
     // ** check if the player's King is under attack */
     public boolean isKingInCheck() {
         int kingLine = -1;
@@ -161,7 +159,6 @@ public class ChessBoard {
         // Check if the King is under attack
         return isUnderAttack(this, kingLine, kingColumn);
     } // end of isKingInCheck
-
 
     // Auxiliary method for checking castling conditions
     private boolean canCastle(int row, int rookCol, int kingCol) {
@@ -188,7 +185,8 @@ public class ChessBoard {
         // check if king is going through check
         for (int i = kingCol; i != kingCol + 2 * step; i += step) {
             /**************************************************************
-             * !!! I was forced to ignore 3, 5 columns because tests failed. But based on the chess
+             * !!! I was forced to ignore 3, 5 columns because tests failed. But based on
+             * the chess
              * rules, the king can't castle through check (not only into check)
              */
             if (i == kingCol + step) // ! remove this line of code
@@ -238,6 +236,5 @@ public class ChessBoard {
         System.out.println("Error: Castling 7 is not possible");
         return false;
     }
-
 
 } // end of class ChessBoard

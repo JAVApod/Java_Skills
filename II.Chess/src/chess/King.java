@@ -1,3 +1,5 @@
+package chess;
+
 public class King extends ChessPiece {
 
     public King(String color) {
@@ -31,7 +33,8 @@ public class King extends ChessPiece {
         int deltaLine = Math.abs(toLine - line);
         int deltaColumn = Math.abs(toColumn - column);
 
-        // Check if the move is one step in any direction (horizontal, vertical, or diagonal)
+        // Check if the move is one step in any direction (horizontal, vertical, or
+        // diagonal)
         if (deltaLine <= 1 && deltaColumn <= 1) {
             return true;
         }
