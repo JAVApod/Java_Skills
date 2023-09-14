@@ -1,36 +1,40 @@
 package chatServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
 class ClientHandler implements Runnable {
   Socket socket;
+  PrintStream out;
 
   public ClientHandler(Socket socket) {
     this.socket = socket;
+    try {
+      // create printstream object for writing data
+      this.out = new PrintStream(socket.getOutputStream());
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
   }
 
   public void run() {
     try {
       // get input and output streams from the socket
-      InputStream is = socket.getInputStream();
-      OutputStream os = socket.getOutputStream();
+      Scanner in = new Scanner(socket.getInputStream());
+      out.println("Welcome to the chat server!"); // send welcome message
 
-      // create scanner and printstream objects for reading/writing data
-      Scanner in = new Scanner(is);
-      PrintStream out = new PrintStream(os);
-
-      // read from client and write back
-      out.println("Welcome to mountains!");
-      String input = in.nextLine();
+      String input = in.nextLine(); // read from client
       while (!input.equals("bye")) {
-        out.println(input + "-" + input + "-" +
-            input.substring(input.length() / 2) + "...");
-        input = in.nextLine();
+        out.println("You said: " + input); // write back to client
+        for (ClientHandler client : Main.clients) {
+          if (client != this) { // write to all clients except this one
+            client.out.println("Client_" + Main.clients.indexOf(this) + " said: " + input);
+          }
+
+        }
+        input = in.nextLine(); // read from client
       }
       socket.close();
       System.out.println("Client disconnected");
@@ -38,4 +42,5 @@ class ClientHandler implements Runnable {
       e.printStackTrace();
     }
   }
+
 }
