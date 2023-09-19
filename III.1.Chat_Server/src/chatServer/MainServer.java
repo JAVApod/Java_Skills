@@ -3,8 +3,12 @@ package chatServer;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainServer {
+
+  static List<ClientHandler> clients = new ArrayList<>();
 
   public static void main(String[] args) throws IOException {
     // create server socket
@@ -18,6 +22,7 @@ public class MainServer {
 
       // create client handler and start thread
       ClientHandler client = new ClientHandler(socket);
+      clients.add(client); // add client to list
       Thread thread = new Thread(client);
       thread.start();
     }
